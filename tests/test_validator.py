@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from release_manager.validator import SampleValidator, ValidationReport
+from release_manager.validator import SampleValidator
 
 
 @pytest.fixture()

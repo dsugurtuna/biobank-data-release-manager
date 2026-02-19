@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-import pytest
 
 from release_manager.sql_helper import SQLQueryBuilder
 

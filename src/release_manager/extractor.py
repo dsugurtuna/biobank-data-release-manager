@@ -98,7 +98,7 @@ class GenotypeExtractor:
 
         try:
             subprocess.run(cmd, check=True, capture_output=True, text=True)
-        except (subprocess.CalledProcessError, FileNotFoundError) as exc:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             return result
 
         # Post-extraction validation
