@@ -1,38 +1,80 @@
 # Biobank Data Release Manager
 
-**A secure, automated pipeline for extracting, validating, and packaging genomic datasets for research delivery.**
+[![CI](https://github.com/dsugurtuna/biobank-data-release-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/dsugurtuna/biobank-data-release-manager/actions)
+[![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
+[![Portfolio](https://img.shields.io/badge/Status-Portfolio_Project-purple.svg)]()
 
-This repository demonstrates a robust workflow used to manage data access requests (DAAs) in a large-scale biobank environment. It bridges the gap between clinical metadata (SQL) and genomic file storage (VCFs), ensuring that researchers receive exactly the data they are approved for—no more, no less.
+Secure genomic data delivery pipeline — SQL query formatting, bcftools VCF extraction, and post-extraction sample concordance validation.
 
-## 📂 Repository Contents
-
-| Script | Role | Description |
-| :--- | :--- | :--- |
-| `extract_and_validate_genotypes.sh` | **Core Pipeline** | The engine of the delivery system. Performs pre-flight checks, executes `bcftools` extraction from master VCFs, and validates sample concordance. |
-| `parse_sql_metadata.sh` | **Data Wrangling** | Cleans raw exports from clinical databases (e.g., HeidiSQL), handling quoting inconsistencies and formatting issues to produce clean ID lists. |
-| `generate_sql_query_params.sh` | **SQL Helper** | Automates the generation of massive SQL `IN (...)` clauses from flat text files, eliminating manual formatting errors for large cohorts. |
-
-## 🚀 Workflow Overview
-
-1.  **Cohort Identification**: Receive a list of requested barcodes/IDs from the research team.
-2.  **Metadata Querying**: Use `generate_sql_query_params.sh` to format these IDs for the internal database, retrieving the corresponding VCF Sample IDs.
-3.  **List Cleaning**: Process the database export with `parse_sql_metadata.sh` to ensure a strictly formatted input list.
-4.  **Extraction & Validation**: Run `extract_and_validate_genotypes.sh` to:
-    *   Verify the existence of the source VCF.
-    *   Check that all requested IDs exist in the source header.
-    *   Extract the subset using `bcftools`.
-    *   **Audit** the output to confirm the final sample count matches the request.
-
-## 🛡️ Security & Compliance
-
-*   **Sanitized Code**: All internal paths, participant IDs, and institutional keys have been removed for this public portfolio.
-*   **Validation First**: The pipeline prioritizes data integrity. If a requested sample is missing from the source, the system flags it immediately rather than failing silently.
-
-## 🛠️ Technical Stack
-
-*   **Bash/Shell Scripting**: For orchestration and glue logic.
-*   **BCFtools**: For high-performance manipulation of VCF/BCF genomic files.
-*   **AWK/Sed**: For efficient text processing and SQL query generation.
+> **Portfolio disclaimer:** This repository contains sanitised, generalised versions of tooling developed at NIHR BioResource. No real participant data or internal paths are included.
 
 ---
-*Created by [dsugurtuna](https://github.com/dsugurtuna)*
+
+## Overview
+
+When a research team requests genotype data for a specific cohort, the delivery process must ensure they receive exactly the approved samples. This toolkit automates:
+
+- **Genotype extraction** — bcftools-based VCF/BCF subset extraction with pre-flight and post-extraction validation.
+- **Sample concordance** — verifying that output files contain precisely the requested participants.
+- **SQL query helpers** — converting flat barcode lists into SQL IN clauses and cleaning database exports.
+
+## Repository Structure
+
+```text
+.
+├── src/release_manager/            Python package
+│   ├── __init__.py
+│   ├── extractor.py                bcftools VCF extraction engine
+│   ├── validator.py                Sample concordance validation
+│   └── sql_helper.py               SQL clause generation, TSV cleaning
+├── tests/
+│   ├── test_validator.py
+│   └── test_sql_helper.py
+├── legacy/                         Original shell scripts
+├── .github/workflows/ci.yml
+├── pyproject.toml
+└── Makefile
+```
+
+## Quick Start
+
+```bash
+pip install -e ".[dev]"
+```
+
+### Python API
+
+```python
+from release_manager import GenotypeExtractor, SampleValidator, SQLQueryBuilder
+
+# Generate SQL IN clause
+clause = SQLQueryBuilder.build_in_clause(["BC001", "BC002", "BC003"])
+# -> "barcode IN ('BC001', 'BC002', 'BC003')"
+
+# Validate sample concordance
+validator = SampleValidator()
+report = validator.validate_fam("request.txt", "output.fam")
+print(f"Concordance: {report.concordance_rate:.0%}")
+print(f"Missing: {report.missing}")
+
+# Extract genotypes (requires bcftools)
+extractor = GenotypeExtractor()
+result = extractor.extract("source.vcf.gz", "samples.txt", "output.vcf.gz")
+print(f"Extracted {result.extracted_samples}/{result.requested_samples}")
+```
+
+## Testing
+
+```bash
+make test   # or: pytest tests/ -v
+```
+
+## Jira Provenance
+
+- **WGS/WES data provisioning** — extracting participant subsets from master VCF files for approved data releases.
+- **Sample concordance** — post-extraction auditing to verify delivery completeness.
+- **SQL query automation** — formatting barcode lists for clinical database queries.
+
+## Licence
+
+MIT
