@@ -1,17 +1,27 @@
-.PHONY: install dev test lint clean
+.PHONY: install dev lint format typecheck test check clean
 
 install:
-	pip install -e .
+	python -m pip install -e .
 
 dev:
-	pip install -e ".[dev]"
-
-test:
-	pytest tests/ -v
+	python -m pip install -e ".[dev]"
 
 lint:
-	ruff check src/ tests/
+	ruff check src tests
+	ruff format --check src tests
+
+format:
+	ruff check --fix src tests
+	ruff format src tests
+
+typecheck:
+	mypy
+
+test:
+	pytest -v
+
+check: lint typecheck test
 
 clean:
-	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
-	rm -rf .pytest_cache dist *.egg-info
+	rm -rf build/ dist/ *.egg-info src/*.egg-info .pytest_cache .ruff_cache .mypy_cache
+	find . -type d -name __pycache__ -prune -exec rm -rf {} +
