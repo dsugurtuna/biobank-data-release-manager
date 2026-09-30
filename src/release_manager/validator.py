@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Set
 
 
 @dataclass
@@ -18,8 +17,8 @@ class ValidationReport:
     expected_count: int = 0
     actual_count: int = 0
     matched: int = 0
-    missing: List[str] = field(default_factory=list)
-    unexpected: List[str] = field(default_factory=list)
+    missing: list[str] = field(default_factory=list)
+    unexpected: list[str] = field(default_factory=list)
 
     @property
     def is_concordant(self) -> bool:
@@ -40,9 +39,9 @@ class SampleValidator:
     """
 
     @staticmethod
-    def load_ids_from_fam(fam_path: str | Path) -> Set[str]:
+    def load_ids_from_fam(fam_path: str | Path) -> set[str]:
         """Extract sample IDs from a PLINK .fam file (column 2)."""
-        ids: Set[str] = set()
+        ids: set[str] = set()
         with open(fam_path) as fh:
             for line in fh:
                 parts = line.strip().split()
@@ -51,15 +50,15 @@ class SampleValidator:
         return ids
 
     @staticmethod
-    def load_ids_from_list(list_path: str | Path) -> Set[str]:
+    def load_ids_from_list(list_path: str | Path) -> set[str]:
         """Load sample IDs from a plain text file (one per line)."""
         with open(list_path) as fh:
             return {line.strip() for line in fh if line.strip()}
 
     def validate(
         self,
-        expected_ids: Set[str],
-        actual_ids: Set[str],
+        expected_ids: set[str],
+        actual_ids: set[str],
     ) -> ValidationReport:
         """Compare expected and actual sample ID sets.
 

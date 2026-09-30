@@ -10,11 +10,7 @@ from release_manager.validator import SampleValidator
 @pytest.fixture()
 def fam_file(tmp_path: Path) -> Path:
     p = tmp_path / "test.fam"
-    p.write_text(
-        "S001 S001 0 0 1 -9\n"
-        "S002 S002 0 0 2 -9\n"
-        "S003 S003 0 0 1 -9\n"
-    )
+    p.write_text("S001 S001 0 0 1 -9\nS002 S002 0 0 2 -9\nS003 S003 0 0 1 -9\n")
     return p
 
 

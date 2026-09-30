@@ -5,14 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "biobank-data-release-manager"
 version = "2.0.0"
-description = "Secure genomic data delivery pipeline."
+description = "Safe SQL lookups, checked bcftools extraction and sample validation for genotype data releases."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = {text = "MIT"}
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0", "ruff"]
+dev = ["pytest>=8.0", "ruff>=0.16,<0.17", "mypy>=1.10"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -21,4 +21,13 @@ where = ["src"]
 testpaths = ["tests"]
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py311"
+
+[tool.ruff.lint]
+# Explicit rule set so results do not drift when ruff changes its defaults.
+select = ["E", "W", "F", "I", "UP", "B", "BLE", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src"]
