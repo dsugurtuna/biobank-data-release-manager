@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+import pytest
+
 from release_manager.sql_helper import SQLQueryBuilder
 
 
@@ -33,3 +35,36 @@ class TestSQLQueryBuilder:
         assert count == 2  # deduplicated
         lines = out.read_text().strip().split("\n")
         assert len(lines) == 3  # header + 2 rows
+
+    def test_quotes_are_escaped(self) -> None:
+        clause = SQLQueryBuilder.build_in_clause(["O'Brien", "BC001"])
+        assert clause == "barcode IN ('O''Brien', 'BC001')"
+
+    def test_injection_attempt_stays_a_literal(self) -> None:
+        clause = SQLQueryBuilder.build_in_clause(["x'); DROP TABLE samples; --"])
+        assert clause == "barcode IN ('x''); DROP TABLE samples; --')"
+
+    def test_bad_column_name_rejected(self) -> None:
+        with pytest.raises(ValueError):
+            SQLQueryBuilder.build_in_clause(["BC001"], column_name="barcode; DROP")
+
+    def test_empty_list_rejected(self) -> None:
+        with pytest.raises(ValueError):
+            SQLQueryBuilder.build_in_clause(["", "  "])
+
+    def test_duplicates_dropped(self) -> None:
+        clause = SQLQueryBuilder.build_in_clause(["BC1", "BC1", "BC2"])
+        assert clause == "barcode IN ('BC1', 'BC2')"
+
+    def test_parameterised_clause_runs_in_sqlite(self) -> None:
+        import sqlite3
+
+        con = sqlite3.connect(":memory:")
+        con.execute("CREATE TABLE samples (barcode TEXT, vcf_id TEXT)")
+        con.executemany(
+            "INSERT INTO samples VALUES (?, ?)",
+            [("BC1", "S1"), ("O'Brien", "S2"), ("BC3", "S3")],
+        )
+        sql, params = SQLQueryBuilder.build_parameterised_in_clause(["O'Brien", "BC3"])
+        rows = con.execute(f"SELECT vcf_id FROM samples WHERE {sql}", params).fetchall()
+        assert sorted(r[0] for r in rows) == ["S2", "S3"]
