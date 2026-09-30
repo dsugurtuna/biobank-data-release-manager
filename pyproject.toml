@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "biobank-data-release-manager"
 version = "2.0.0"
-description = "Secure genomic data delivery pipeline."
+description = "Safe SQL lookups, checked bcftools extraction and sample validation for genotype data releases."
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}

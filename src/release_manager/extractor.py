@@ -19,7 +19,7 @@ def output_type_for(path: str | Path) -> str:
     """Return the bcftools -O code for an output file name.
 
     Setting -O explicitly avoids writing uncompressed text to a file named
-    .vcf.gz on bcftools versions that do not infer the type from the name.
+    .vcf.gz on bcftools before 1.12, which did not infer the type from the name.
     """
     name = str(path).lower()
     for suffix, code in _OUTPUT_TYPES.items():

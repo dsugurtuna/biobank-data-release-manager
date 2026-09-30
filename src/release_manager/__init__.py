@@ -1,4 +1,4 @@
-"""Biobank Data Release Manager — secure genomic data delivery pipeline."""
+"""Biobank Data Release Manager: checked lookups and VCF extraction for releases."""
 
 __version__ = "2.0.0"
 
