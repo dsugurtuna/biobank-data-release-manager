@@ -8,7 +8,7 @@ import pytest
 
 from release_manager.extractor import GenotypeExtractor, output_type_for
 
-FAKE = Path(__file__).with_name("fake_bcftools.py")
+FAKE = Path(__file__).resolve().parent.parent / "examples" / "fake_bcftools.py"
 
 
 @pytest.fixture()

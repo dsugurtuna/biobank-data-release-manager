@@ -1,4 +1,4 @@
-"""A tiny stand-in for bcftools (query -l, view -S), used by the tests.
+"""A tiny stand-in for bcftools (query -l, view -S), used by the demo and tests.
 
 It reads and writes plain-text VCF whatever the file name, and mimics the
 one behaviour the extractor relies on: `view -S` fails when a requested
