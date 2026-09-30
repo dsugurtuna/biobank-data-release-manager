@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------
 # Script: parse_sql_metadata.sh
 # Description: Processes raw metadata exports from clinical databases (e.g., 
-#              HeidiSQL/MySQL dumps). Cleans formatting issues (quoted strings)
+#              SQL client exports or MySQL dumps). Cleans formatting issues (quoted strings)
 #              to prepare clean ID lists for the extraction pipeline.
 #
 

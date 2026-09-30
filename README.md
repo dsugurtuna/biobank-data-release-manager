@@ -119,12 +119,6 @@ flowchart LR
 - Report which approved barcodes had no genotype data, by name.
 - Chunked or temporary-table lookups for very long lists.
 
-## Jira Provenance
-
-- **WGS/WES data provisioning** — extracting participant subsets from master VCF files for approved data releases.
-- **Sample concordance** — post-extraction auditing to verify delivery completeness.
-- **SQL query automation** — formatting barcode lists for clinical database queries.
-
 ## Development
 
 ```bash
