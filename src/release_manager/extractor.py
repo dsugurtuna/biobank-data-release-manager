@@ -9,7 +9,6 @@ from __future__ import annotations
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional, Set
 
 
 @dataclass
@@ -20,7 +19,7 @@ class ExtractionResult:
     output_vcf: str
     requested_samples: int
     extracted_samples: int
-    missing_samples: List[str] = field(default_factory=list)
+    missing_samples: list[str] = field(default_factory=list)
     success: bool = False
 
     @property
@@ -42,12 +41,12 @@ class GenotypeExtractor:
     def __init__(self, bcftools_path: str = "bcftools") -> None:
         self.bcftools_path = bcftools_path
 
-    def _load_sample_list(self, sample_file: str | Path) -> List[str]:
+    def _load_sample_list(self, sample_file: str | Path) -> list[str]:
         """Load sample IDs from a flat text file (one per line)."""
         with open(sample_file) as fh:
             return [line.strip() for line in fh if line.strip()]
 
-    def _get_vcf_samples(self, vcf_path: str | Path) -> Set[str]:
+    def _get_vcf_samples(self, vcf_path: str | Path) -> set[str]:
         """Extract sample IDs from a VCF file header."""
         try:
             result = subprocess.run(
@@ -65,7 +64,7 @@ class GenotypeExtractor:
         source_vcf: str | Path,
         sample_file: str | Path,
         output_vcf: str | Path,
-        regions: Optional[str] = None,
+        regions: str | None = None,
     ) -> ExtractionResult:
         """Extract a subset of samples from a VCF.
 
@@ -88,9 +87,12 @@ class GenotypeExtractor:
         )
 
         cmd = [
-            self.bcftools_path, "view",
-            "-S", str(sample_file),
-            "-o", str(output_vcf),
+            self.bcftools_path,
+            "view",
+            "-S",
+            str(sample_file),
+            "-o",
+            str(output_vcf),
             str(source_vcf),
         ]
         if regions:

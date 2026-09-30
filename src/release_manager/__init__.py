@@ -2,14 +2,14 @@
 
 __version__ = "2.0.0"
 
-from .extractor import GenotypeExtractor, ExtractionResult
-from .validator import SampleValidator, ValidationReport
+from .extractor import ExtractionResult, GenotypeExtractor
 from .sql_helper import SQLQueryBuilder
+from .validator import SampleValidator, ValidationReport
 
 __all__ = [
-    "GenotypeExtractor",
     "ExtractionResult",
+    "GenotypeExtractor",
+    "SQLQueryBuilder",
     "SampleValidator",
     "ValidationReport",
-    "SQLQueryBuilder",
 ]

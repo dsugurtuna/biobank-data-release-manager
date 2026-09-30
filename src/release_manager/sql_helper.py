@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import csv
 from pathlib import Path
-from typing import List
 
 
 class SQLQueryBuilder:
@@ -20,7 +19,7 @@ class SQLQueryBuilder:
 
     @staticmethod
     def build_in_clause(
-        ids: List[str],
+        ids: list[str],
         column_name: str = "barcode",
     ) -> str:
         """Build a SQL IN clause from a list of identifiers.
@@ -42,7 +41,7 @@ class SQLQueryBuilder:
         return f"{column_name} IN ({quoted})"
 
     @staticmethod
-    def ids_from_file(path: str | Path) -> List[str]:
+    def ids_from_file(path: str | Path) -> list[str]:
         """Load identifiers from a flat text file (one per line)."""
         with open(path) as fh:
             return [line.strip() for line in fh if line.strip()]
@@ -58,8 +57,8 @@ class SQLQueryBuilder:
         Strips quotes, deduplicates rows, and writes a clean output.
         Returns the number of output rows.
         """
-        rows: list = []
-        seen: set = set()
+        rows: list[list[str]] = []
+        seen: set[tuple[str, ...]] = set()
         with open(input_path) as fh:
             reader = csv.reader(fh, delimiter="\t")
             header = next(reader, None)
